@@ -1,0 +1,43 @@
+function drx_da_main_actor_on_interaction_geologist_bonus(typ, obj, name)
+    if typ == "anomalies" and (name == "emission_end" or name == "psi_storm_end") then
+        local level_name = level.name()
+        local old_chance_level_chance = drx_da_main_artefacts.artefacts_map_chances and drx_da_main_artefacts.artefacts_map_chances[level_name]
+        local geologist_bonus = game_achievements.has_achievement("geologist") and 5 or 0
+        if old_chance_level_chance then
+            drx_da_main_artefacts.artefacts_map_chances[level_name] = old_chance_level_chance + geologist_bonus
+        end
+
+        local old_settings_chance = drx_da_main.settings.artefacts_spawn_chance
+        if old_settings_chance then
+            drx_da_main.settings.artefacts_spawn_chance = old_settings_chance + geologist_bonus
+        end
+
+        drx_da_main.actor_on_interaction(typ, obj, name)
+
+        if old_chance_level_chance then
+            drx_da_main_artefacts.artefacts_map_chances[level_name] = old_chance_level_chance
+        end
+
+        if old_settings_chance then
+            drx_da_main.settings.artefacts_spawn_chance = old_settings_chance
+        end
+    end
+end
+
+function bind_anomaly_zone_actor_on_interaction_zone_geologist_bonus(typ, obj, name)
+    if typ == "anomalies" and (name == "emission_end" or name == "psi_storm_end") then
+        local geologist_bonus = game_achievements.has_achievement("geologist") and 5 or 0
+        local old_chance = grok_artefacts_random_spawner.per_field_probability
+        grok_artefacts_random_spawner.per_field_probability = old_chance + geologist_bonus
+        bind_anomaly_zone.actor_on_interaction(typ, obj, name)
+        grok_artefacts_random_spawner.per_field_probability = old_chance
+    end
+end
+
+function on_game_start()
+    UnregisterScriptCallback("actor_on_interaction", drx_da_main.actor_on_interaction)
+    RegisterScriptCallback("actor_on_interaction", drx_da_main_actor_on_interaction_geologist_bonus)
+
+    UnregisterScriptCallback("actor_on_interaction", bind_anomaly_zone.actor_on_interaction)
+    RegisterScriptCallback("actor_on_interaction", bind_anomaly_zone_actor_on_interaction_zone_geologist_bonus)
+end
