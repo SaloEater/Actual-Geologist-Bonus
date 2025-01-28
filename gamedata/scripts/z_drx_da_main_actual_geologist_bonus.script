@@ -3,7 +3,6 @@ local bind_anomaly_zone_actor_on_interaction_old = bind_anomaly_zone.actor_on_in
 
 function drx_da_main_actor_on_interaction_geologist_bonus(typ, obj, name)
     if typ == "anomalies" and (name == "emission_end" or name == "psi_storm_end") then
-        game_achievements.geologist_rewards()
         local level_name = level.name()
         local old_chance_level_chance = drx_da_main_artefacts.artefacts_map_chances and drx_da_main_artefacts.artefacts_map_chances[level_name]
         local geologist_bonus = game_achievements.has_achievement("geologist") and 5 or 0
@@ -30,7 +29,6 @@ end
 
 function bind_anomaly_zone_actor_on_interaction_zone_geologist_bonus(typ, obj, name)
     if typ == "anomalies" and (name == "emission_end" or name == "psi_storm_end") then
-        game_achievements.geologist_rewards()
         local geologist_bonus = game_achievements.has_achievement("geologist") and 5 or 0
         local old_chance = grok_artefacts_random_spawner.per_field_probability
         grok_artefacts_random_spawner.per_field_probability = old_chance + geologist_bonus
